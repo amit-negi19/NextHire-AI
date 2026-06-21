@@ -2,6 +2,10 @@
 
 > AI-powered technical & HR interview coach and recruiter hiring platform powered by Google Gemini, built on the PERN stack.
 
+🚀 Live Demo
+
+🌐 https://next-hire-ai-kappa.vercel.app
+
 ## 🏗️ Tech Stack
 
 | Layer | Technology |
@@ -104,12 +108,12 @@ NextHireAi/
 
 ### `/server/.env`
 ```
-PORT=5000
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=nexthire_db
-DB_USER=postgres
-DB_PASSWORD=postgres
+PORT=
+DB_HOST=
+DB_PORT=
+DB_NAME=
+DB_USER=
+DB_PASSWORD=
 JWT_SECRET=your_super_secret_jwt_key_here
 GEMINI_API_KEY=your_gemini_api_key_here
 ```
