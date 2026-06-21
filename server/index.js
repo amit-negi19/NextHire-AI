@@ -7,10 +7,16 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // ── Middleware ────────────────────────────────────────────────────────────────
-app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:3000'],
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: [
+      'http://localhost:5173',
+      'http://localhost:3000',
+      'https://next-hire-ai-kappa.vercel.app'
+    ],
+    credentials: true,
+  })
+);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
@@ -71,7 +77,7 @@ app.listen(PORT, async () => {
     }
   } catch (dbErr) {
     console.error('\n❌ DATABASE CONNECTION FAILED:', dbErr.message);
-    console.error('   Check your DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD in server/.env\n');
+    console.error('   Check your DATABASE_URL in server/.env\n');
   }
 });
 
