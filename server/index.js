@@ -31,6 +31,12 @@ app.use('/api/interview', require('./routes/interviewRoutes'));
 app.use('/api/analytics', require('./routes/analytics'));
 app.use('/api/jobs', require('./routes/jobs'));
 
+// ── Root Route ────────────────────────────────────────────────────────────────
+app.get('/', (req, res) => {
+  res.send('NextHire Backend is Running 🚀');
+});
+
+
 // ── Health Check ──────────────────────────────────────────────────────────────
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'NextHire API is running 🚀', timestamp: new Date().toISOString() });
@@ -45,41 +51,26 @@ app.use((err, req, res, next) => {
 // ── Start Server ──────────────────────────────────────────────────────────────
 const pool = require('./db/pool');
 
-app.listen(PORT, async () => {
-  console.log(`\n🚀 NextHire API running at http://localhost:${PORT}`);
-  console.log(`📋 Health check: http://localhost:${PORT}/api/health\n`);
+app.listen(PORT, () => {
+  console.log(`🚀 NextHire API running on port ${PORT}`);
+});
 
-  // Test DB connectivity on startup
+(async () => {
   try {
     const res = await pool.query('SELECT NOW()');
     console.log(`✅ PostgreSQL connected — server time: ${res.rows[0].now}`);
 
-    // Auto-migrate: add parsed_json column if not present
     await pool.query(`
       ALTER TABLE resumes
       ADD COLUMN IF NOT EXISTS parsed_json JSONB DEFAULT '{}'
     `);
-    console.log('✅ DB migration: parsed_json column ensured on resumes table.');
 
-    // Check that schema has been applied
-    const tables = await pool.query(
-      `SELECT table_name FROM information_schema.tables WHERE table_schema='public'`
-    );
-    const existing = tables.rows.map(r => r.table_name);
-    const required = ['users', 'resumes', 'interview_sessions', 'interview_qa', 'analytics'];
-    const missing = required.filter(t => !existing.includes(t));
+    console.log('✅ DB migration complete');
 
-    if (missing.length > 0) {
-      console.warn(`⚠️  Missing tables: ${missing.join(', ')}`);
-      console.warn('   Run the schema: psql -U postgres -d nexthire_db -f server/db/schema.sql');
-    } else {
-      console.log('✅ All required database tables are present.\n');
-    }
   } catch (dbErr) {
-    console.error('\n❌ DATABASE CONNECTION FAILED:', dbErr.message);
-    console.error('   Check your DATABASE_URL in server/.env\n');
+    console.error('❌ DATABASE CONNECTION FAILED:', dbErr.message);
   }
-});
+})();
 
 module.exports = app;
 
